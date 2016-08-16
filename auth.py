@@ -1,21 +1,20 @@
 import jwt
-
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from django.utils.encoding import smart_text
 from django.utils.translation import ugettext as _
-
-from rest_framework import exceptions
-from rest_framework.authentication import BaseAuthentication, get_authorization_header
-
 from knox.crypto import hash_token
 from knox.models import AuthToken
+from rest_framework import exceptions
+from rest_framework.authentication import (BaseAuthentication,
+                                           get_authorization_header)
 
 from jwt_knox.settings import api_settings
-
 
 jwt_decode_handler = api_settings.JWT_DECODE_HANDLER
 jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
 jwt_get_knox_token_from_payload = api_settings.JWT_PAYLOAD_GET_TOKEN_HANDLER
+
 
 class BaseJWTTAuthentication(BaseAuthentication):
     """
@@ -59,7 +58,6 @@ class BaseJWTTAuthentication(BaseAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         return (user, self.ensure_valid_auth_token(user, token))
-
 
     def ensure_valid_auth_token(self, user, token):
         for auth_token in AuthToken.objects.filter(user=user):
@@ -114,7 +112,6 @@ class JSONWebTokenKnoxAuthentication(BaseJWTTAuthentication):
 
         return payload
 
-
     def authenticate_header(self, request):
         """
         Return a string to be used as the value of WWW-Authenticate
@@ -122,5 +119,5 @@ class JSONWebTokenKnoxAuthentication(BaseJWTTAuthentication):
         authentication scheme should return 403 Permission Denied respones.
         """
 
-        return '{0} realm="{1}"'.format(api_settings.JWT_AUTH_HEADER_PREFIX, self.www_authenticate_realm)
-
+        return '{0} realm="{1}"'.format(api_settings.JWT_AUTH_HEADER_PREFIX,
+                                        self.www_authenticate_realm)

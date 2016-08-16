@@ -1,10 +1,7 @@
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from knox.models import AuthToken
-from knox.settings import knox_settings
 
 from jwt_knox.auth import JSONWebTokenKnoxAuthentication
 from jwt_knox.settings import api_settings

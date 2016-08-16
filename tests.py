@@ -1,8 +1,7 @@
 from django.core.urlresolvers import reverse
-from rest_framework.test import APIClient, APITestCase
+from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from rest_framework import status
-from .settings import api_settings
 
 
 class APIAuthTest(APITestCase):
@@ -38,12 +37,7 @@ class APIAuthTest(APITestCase):
             self.client.credentials(HTTP_AUTHORIZATION=None)
             return self
 
-        auth_header = "{prefix} {token}".format(
-            prefix=api_settings.JWT_AUTH_HEADER_PREFIX,
-            token=token
-        )
-
-        self.client.credentials(HTTP_AUTHORIZATION=auth_header)
+        self.client.credentials(HTTP_AUTHORIZATION=token)
 
         return self
 
@@ -79,17 +73,6 @@ class APIAuthTest(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             response_list.append(response)
         return response_list
-
-    @staticmethod
-    def build_auth_header(token):
-        """
-        This method allows to build the authentication header that a client could use for his future requests.
-        :param token: the token we want to use to authenticate the client
-        :return:
-        """
-        header = "{prefix} {token}".format(prefix=api_settings.JWT_AUTH_HEADER_PREFIX,
-                                           token=token)
-        return header
 
     def test_get_token(self):
         """

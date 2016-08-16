@@ -1,6 +1,5 @@
 import jwt
 import uuid
-import warnings
 from calendar import timegm
 from datetime import datetime
 
@@ -18,6 +17,7 @@ def get_username_field():
         username_field = 'username'
 
     return username_field
+
 
 def get_username(user):
     try:
@@ -37,6 +37,7 @@ def create_auth_token(user, expires):
 
 def jwt_get_token_from_payload_handler(payload):
     return payload.get('jti')
+
 
 def jwt_get_username_from_payload_handler(payload):
     return payload.get('username')
@@ -70,17 +71,12 @@ def jwt_payload_handler(user, token, expires):
 
 
 def jwt_encode_handler(payload):
-    return jwt.encode(
-        payload,
-        api_settings.JWT_SECRET_KEY,
-        api_settings.JWT_ALGORITHM
-    ).decode('utf-8')
+    return jwt.encode(payload, api_settings.JWT_SECRET_KEY,
+                      api_settings.JWT_ALGORITHM).decode('utf-8')
 
 
 def jwt_decode_handler(token):
-    options = {
-        'verify_exp': True,
-    }
+    options = {'verify_exp': True, }
 
     return jwt.decode(
         token,
@@ -90,12 +86,13 @@ def jwt_decode_handler(token):
         leeway=api_settings.JWT_LEEWAY,
         audience=api_settings.JWT_AUDIENCE,
         issuer=api_settings.JWT_ISSUER,
-        algorithms=[api_settings.JWT_ALGORITHM],
-    )
+        algorithms=[api_settings.JWT_ALGORITHM], )
+
+
+def jwt_join_header_and_token(token):
+    return "{0} {1}".format(api_settings.JWT_AUTH_HEADER_PREFIX,
+                            token, )
+
 
 def jwt_response_payload_handler(token, user=None, request=None):
-    return {
-        'token': token,
-    }
-
-
+    return {'token': jwt_join_header_and_token(token), }
