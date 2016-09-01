@@ -1,6 +1,7 @@
-from django.core.urlresolvers import reverse
 from rest_framework.test import APITestCase
+
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from rest_framework import status
 
 
@@ -13,24 +14,28 @@ class APIAuthTest(APITestCase):
     test_logout_all_client_number = 3
 
     # Used URLs
-    login_url = reverse('jwt_knox:get_new_token')
-    verify_url = reverse('jwt_knox:verify_token')
-    logout_current_url = reverse('jwt_knox:logout_current_token')
-    logout_other_url = reverse('jwt_knox:logout_other_tokens')
-    logout_all_url = reverse('jwt_knox:logout_all_user_tokens')
+    login_url = reverse('jwt_knox-get-token')
+    verify_url = reverse('jwt_knox-verify')
+    logout_current_url = reverse('jwt_knox-logout')
+    logout_other_url = reverse('jwt_knox-logout-other')
+    logout_all_url = reverse('jwt_knox-logout-all')
 
     def setUp(self):
         """
         Before each test, run the create_test_user fixture
         """
-        self.fixture_create_test_user()
+        self.user = self.fixture_create_test_user()
 
     def fixture_create_test_user(self):
         """
         Adds the default user to the database
         :return:
         """
-        User.objects.create_user(username=self.username, email=self.email, password=self.password)
+        user = User.objects.create_user( username=self.username,
+                                         email=self.email, password=self.password)
+
+        return user
+
 
     def with_token(self, token):
         if not token:
@@ -55,23 +60,40 @@ class APIAuthTest(APITestCase):
     def logout_all(self):
         return self.client.post(self.logout_all_url)
 
+
+    def basic_authentication(self):
+        from base64 import b64encode
+        values = "{username}:{password}".format(
+            username=self.username,
+            password=self.password,
+        )
+        b64values = b64encode(values.encode('utf-8')).decode('utf-8')
+        auth_header = "Basic {0}".format(b64values)
+        self.client.credentials(HTTP_AUTHORIZATION=auth_header)
+        return self
+
     def get_token(self):
-        self.client.login(username=self.username, password=self.password)
+        # Instead of force_authenticate, we can also use basic_authentication
+        # self.basic_authentication()
+        self.client.force_authenticate(user=self.user)
         response = self.client.post(self.login_url)
+        self.client.force_authenticate() # Unset authentication after our request
         return response
 
-    def get_n_tokens(self,n):
+    def get_n_tokens(self, n):
         """
         This method allows to get an arbitrary number of tokens for a logged client
         :param n: Number of tokens we want to get
         :return:
         """
         response_list = []
-        self.client.login(username=self.username, password=self.password)
-        for i in range (0,n):
+        self.basic_authentication()
+        self.client.force_authenticate(user=self.user)
+        for i in range(0, n):
             response = self.client.post(self.login_url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             response_list.append(response)
+        self.client.force_authenticate() # Unset authentication after our request
         return response_list
 
     def test_get_token(self):
@@ -90,7 +112,8 @@ class APIAuthTest(APITestCase):
         login_response = self.get_token()
         token = login_response.data['token']
         logout_response = self.with_token(token).logout_current()
-        self.assertEqual(logout_response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(logout_response.status_code,
+                         status.HTTP_204_NO_CONTENT)
 
     def test_double_login(self):
         """
@@ -115,8 +138,10 @@ class APIAuthTest(APITestCase):
         token = login_response.data['token']
         logout_response1 = self.with_token(token).logout_current()
         logout_response2 = self.with_token(token).logout_current()
-        self.assertEqual(logout_response1.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(logout_response2.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(logout_response1.status_code,
+                         status.HTTP_204_NO_CONTENT)
+        self.assertEqual(logout_response2.status_code,
+                         status.HTTP_401_UNAUTHORIZED)
 
     def test_verify_old_token(self):
         """
@@ -127,7 +152,8 @@ class APIAuthTest(APITestCase):
         token = login_response.data['token']
         logout_response = self.with_token(token).logout_current()
         verify_response = self.verify_token(token)
-        self.assertEqual(verify_response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(verify_response.status_code,
+                         status.HTTP_401_UNAUTHORIZED)
 
     def test_logout_non_logged(self):
         """
@@ -191,11 +217,13 @@ class APIAuthTest(APITestCase):
         """
         token_list = []
         response_list = self.get_n_tokens(self.test_logout_all_client_number)
-        for i in range(0,self.test_logout_all_client_number):
+        for i in range(0, self.test_logout_all_client_number):
             token = response_list[i].data['token']
             token_list.append(token)
         logout_response = self.with_token(token_list[0]).logout_all()
-        self.assertEqual(logout_response.status_code, status.HTTP_204_NO_CONTENT)
-        for i in range(0,self.test_logout_all_client_number):
+        self.assertEqual(logout_response.status_code,
+                         status.HTTP_204_NO_CONTENT)
+        for i in range(0, self.test_logout_all_client_number):
             response = self.verify_token(token_list[i])
-            self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+            self.assertEqual(response.status_code,
+                             status.HTTP_401_UNAUTHORIZED)
