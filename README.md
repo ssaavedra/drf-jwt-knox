@@ -3,6 +3,7 @@ DRF JWT + Knox
 
 [![Build Status](https://travis-ci.org/ssaavedra/drf-jwt-knox.svg?branch=master)](https://travis-ci.org/ssaavedra/drf-jwt-knox)
 [![codecov](https://codecov.io/gh/ssaavedra/drf-jwt-knox/branch/master/graph/badge.svg)](https://codecov.io/gh/ssaavedra/drf-jwt-knox)
+[![PyPI version](https://img.shields.io/pypi/v/drf-jwt-knox.svg)](https://pypi.python.org/pypi/drf-jwt-knox)
 [![Requirements Status](https://requires.io/github/ssaavedra/drf-jwt-knox/requirements.svg?branch=master)](https://requires.io/github/ssaavedra/drf-jwt-knox/requirements/?branch=master)
 
 This package provides an authentication mechanism for Django REST
