@@ -23,7 +23,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='drf-jwt-knox',
-    version='0.1.0.dev1',
+    version='0.1.0',
     description='JSON Web Tokens with a Knox-powered database backend',
     long_description=read_md('README.md'),
     url='https://github.com/ssaavedra/drf-jwt-knox',
