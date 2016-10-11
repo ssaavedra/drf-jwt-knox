@@ -1,6 +1,8 @@
 DRF JWT + Knox
 ==============
 
+[![Build Status](https://travis-ci.org/ssaavedra/drf-jwt-knox.svg?branch=master)](https://travis-ci.org/ssaavedra/drf-jwt-knox)
+
 This package provides an authentication mechanism for Django REST
 Framework based on [JSON Web Tokens][JWT] in the browser backed up by
 [Knox][knox]-powered tokens in the database.
@@ -32,6 +34,14 @@ Then, add this app's routes to some of your `urlpatterns`.
 
 You can use the `verify` endpoint to verify whether a token is valid
 or not (which may be useful in a microservice architecture).
+
+
+Tests
+=====
+
+Tests are automated with `tox` and run on Travis-CI automatically. You
+can check the status in Travis, or just run `tox` from the command
+line.
 
 
 Contributing
