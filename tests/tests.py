@@ -8,9 +8,9 @@ from rest_framework import status
 class APIAuthTest(APITestCase):
 
     # Our default user's credentials
-    username = 'prova1'
+    username = 'test_user'
     email = ''
-    password = 'usuario123'
+    password = 'secret_password'
     test_logout_all_client_number = 3
 
     # Used URLs
@@ -31,8 +31,10 @@ class APIAuthTest(APITestCase):
         Adds the default user to the database
         :return:
         """
-        user = User.objects.create_user( username=self.username,
-                                         email=self.email, password=self.password)
+        user = User.objects.create_user(username=self.username,
+                                        email=self.email,
+                                        password=self.password,
+        )
 
         return user
 
