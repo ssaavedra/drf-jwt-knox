@@ -34,12 +34,18 @@ def pytest_configure():
             'django.contrib.sites',
             'django.contrib.staticfiles',
             'rest_framework',
-            'rest_framework.authtoken',
+            'knox',
             'tests',
         ),
         PASSWORD_HASHERS=(
             'django.contrib.auth.hashers.MD5PasswordHasher',
         ),
+        REST_FRAMEWORK={
+            'DEFAULT_AUTHENTICATION_CLASSES': [
+                'rest_framework.authentication.BasicAuthentication',
+                'rest_framework.authentication.SessionAuthentication',
+            ],
+        },
     )
 
     try:
