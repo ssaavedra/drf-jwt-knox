@@ -2,6 +2,7 @@ DRF JWT + Knox
 ==============
 
 [![Build Status](https://travis-ci.org/ssaavedra/drf-jwt-knox.svg?branch=master)](https://travis-ci.org/ssaavedra/drf-jwt-knox)
+[![Requirements Status](https://requires.io/github/ssaavedra/drf-jwt-knox/requirements.svg?branch=master)](https://requires.io/github/ssaavedra/drf-jwt-knox/requirements/?branch=master)
 
 This package provides an authentication mechanism for Django REST
 Framework based on [JSON Web Tokens][JWT] in the browser backed up by
