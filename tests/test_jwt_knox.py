@@ -1,7 +1,10 @@
 from rest_framework.test import APITestCase
 
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ImportError:
+    from django.urls import reverse
 from rest_framework import status
 
 

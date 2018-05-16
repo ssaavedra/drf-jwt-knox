@@ -23,7 +23,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='drf-jwt-knox',
-    version='0.1.0',
+    version='0.1.1',
     description='JSON Web Tokens with a Knox-powered database backend',
     long_description=read_md('README.md'),
     url='https://github.com/ssaavedra/drf-jwt-knox',
@@ -43,9 +43,9 @@ setup(
     ],
     # keywords='',
     packages=['jwt_knox'],
-    install_requires=['djangorestframework~=3.4', 'django-rest-knox~=2.2', 'PyJWT~=1.4', 'six~=1.10'],
+    install_requires=['djangorestframework~=3.8', 'django-rest-knox~=3.1', 'PyJWT~=1.6', 'six~=1.11'],
     extras_require={
-        'dev': ['pypandoc~=1.2'],
-        'test': ['coverage~=4.2', 'pytest~=3.0.2', 'tox~=2.3'],
+        'dev': ['pypandoc~=1.4'],
+        'test': ['coverage~=4.5', 'pytest~=3.5.1', 'tox~=3.0'],
     },
 )

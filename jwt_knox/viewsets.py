@@ -1,6 +1,7 @@
 from rest_framework import status
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import ForcedAuthentication
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
@@ -11,12 +12,14 @@ from jwt_knox.utils import create_auth_token
 response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
 
 class PerViewAuthenticatorMixin(object):
-    def initial(self, request, *args, **kwargs):
+    def initialize_request(self, request, *args, **kwargs):
         """
-        Reinitialize self.request so that it gets the correct authenticators again.
+        Returns the initial request object.
         """
-        self.request = request = self.initialize_request(request, *args, **kwargs)
-        return super(PerViewAuthenticatorMixin, self).initial(request, *args, **kwargs)
+        request = super(PerViewAuthenticatorMixin, self).initialize_request(request, *args, **kwargs)
+        if not any([isinstance(auth, ForcedAuthentication) for auth in request.authenticators]):
+            request.authenticators = self.get_authenticators()
+        return request
 
     def get_authenticators(self):
         """
@@ -59,7 +62,7 @@ class JWTKnoxAPIViewSet(PerViewAuthenticatorMixin, ViewSet):
         if view_name == 'get_token':
             return api_settings.JWT_LOGIN_AUTHENTICATION_CLASSES
 
-    @list_route(methods=['post', ])
+    @action(methods=['post', ], detail=False)
     def get_token(self, request, expires=None):
         """
         This view authenticates a user via the
@@ -70,14 +73,14 @@ class JWTKnoxAPIViewSet(PerViewAuthenticatorMixin, ViewSet):
         token = create_auth_token(user=request.user, expires=expires)
         return Response(response_payload_handler(token, request.user, request))
 
-    @list_route(methods=('get', 'post'))
+    @action(methods=('get', 'post'), detail=False)
     def verify(self, request):
         """
         This view allows a third party to verify a web token.
         """
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
-    @list_route(methods=('get', ))
+    @action(methods=('get', ), detail=False)
     def debug_verify(self, request):
         """
         This view returns internal data on the token, the user and the current
@@ -90,7 +93,7 @@ class JWTKnoxAPIViewSet(PerViewAuthenticatorMixin, ViewSet):
             response_payload_handler(token, request.user, request),
             status=status.HTTP_200_OK)
 
-    @list_route(methods=('post', ))
+    @action(methods=('post', ), detail=False)
     def logout(self, request):
         """
         Invalidates the current token, so that it cannot be used anymore
@@ -99,7 +102,7 @@ class JWTKnoxAPIViewSet(PerViewAuthenticatorMixin, ViewSet):
         request.auth[1].delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
-    @list_route(methods=('post', ))
+    @action(methods=('post', ), detail=False)
     def logout_other(self, request):
         """
         Invalidates all the tokens except the current one, so that all other
@@ -111,7 +114,7 @@ class JWTKnoxAPIViewSet(PerViewAuthenticatorMixin, ViewSet):
         num = tokens_to_delete.delete()
         return Response({"deleted_sessions": num[0]})
 
-    @list_route(methods=('post', ))
+    @action(methods=('post', ), detail=False)
     def logout_all(self, request):
         """
         Invalidates all currently valid tokens for the user, including the
