@@ -7,9 +7,7 @@ sudo: false
 
 env:
   - TOX_ENV=py27-django111lts
-  - TOX_ENV=py35-django111lts
   - TOX_ENV=py36-django111lts
-  - TOX_ENV=py35-django20
   - TOX_ENV=py36-django20
   - TOX_ENV=py36-djangomaster
 
