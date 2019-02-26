@@ -61,10 +61,9 @@ class BaseJWTTAuthentication(BaseAuthentication):
 
     def ensure_valid_auth_token(self, user, token):
         for auth_token in AuthToken.objects.filter(user=user):
-            if auth_token.expires is not None:
-                if auth_token.expires < timezone.now():
-                    auth_token.delete()
-                    continue
+            if auth_token.expires is not None and auth_token.expires < timezone.now():
+                auth_token.delete()
+                continue
             digest = hash_token(token, auth_token.salt)
             if digest == auth_token.digest:
                 return auth_token
