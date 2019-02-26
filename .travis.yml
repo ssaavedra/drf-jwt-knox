@@ -1,5 +1,9 @@
 language: python
 
+addons:
+  sonarcloud:
+    organization: ssaavedra-github
+
 python:
   - "3.6"
 
@@ -21,6 +25,7 @@ install:
 
 script:
   - tox -e $TOX_ENV
+  - sonar-scanner
 
 after_success:
   - pip install codecov
