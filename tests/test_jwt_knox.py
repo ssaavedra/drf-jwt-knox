@@ -1,5 +1,6 @@
 from rest_framework.test import APITestCase
 
+from datetime import timedelta
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
@@ -34,10 +35,9 @@ class APIAuthTest(APITestCase):
         user = User.objects.create_user(username=self.username,
                                         email=self.email,
                                         password=self.password,
-        )
+                                        )
 
         return user
-
 
     def with_token(self, token):
         if not token:
@@ -62,7 +62,6 @@ class APIAuthTest(APITestCase):
     def logout_all(self):
         return self.client.post(self.logout_all_url)
 
-
     def basic_authentication(self):
         from base64 import b64encode
         values = "{username}:{password}".format(
@@ -79,12 +78,14 @@ class APIAuthTest(APITestCase):
         # self.basic_authentication()
         self.client.force_authenticate(user=self.user)
         response = self.client.post(self.login_url)
-        self.client.force_authenticate() # Unset authentication after our request
+        # Unset authentication after our request
+        self.client.force_authenticate()
         return response
 
     def get_n_tokens(self, n):
         """
-        This method allows to get an arbitrary number of tokens for a logged client
+        This method allows to get an arbitrary number of tokens for a
+        logged-in client
         :param n: Number of tokens we want to get
         :return:
         """
@@ -95,8 +96,46 @@ class APIAuthTest(APITestCase):
             response = self.client.post(self.login_url)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             response_list.append(response)
-        self.client.force_authenticate() # Unset authentication after our request
+        # Unset authentication after our request
+        self.client.force_authenticate()
         return response_list
+
+    def test_authentication_bad_token_info(self):
+        """
+        Verify that a valid JWT without the token jti information
+        will not authorize
+        """
+        from jwt_knox.utils import (
+                jwt_encode_handler,
+                jwt_join_header_and_token,
+                jwt_payload_handler
+        )
+        token = jwt_join_header_and_token(jwt_encode_handler(
+            jwt_payload_handler(self.user, None, timedelta(10))))
+        response = self.with_token(token).logout_current()
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authentication_user_inactive(self):
+        """
+        Disallow login with a token for a user that has is_active=False
+        """
+        login_response = self.get_token()
+        token = login_response.data['token']
+        self.user.is_active = False
+        self.user.save()
+        response = self.verify_token(token)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_authentication_user_removed(self):
+        """
+        Disallow login gracefully with a token for a user that is no
+        longer in the DB
+        """
+        login_response = self.get_token()
+        token = login_response.data['token']
+        self.user.delete()
+        response = self.verify_token(token)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_token(self):
         """
@@ -119,7 +158,8 @@ class APIAuthTest(APITestCase):
 
     def test_double_login(self):
         """
-        This test proves that if a user can log in twice and the two tokens he will be provided are different
+        This test proves that if a user can log in twice and the two
+        tokens he will be provided are different
         :return:
         """
         # Warning, in the next few lines we are using 'magic numbers'
@@ -132,7 +172,8 @@ class APIAuthTest(APITestCase):
 
     def test_double_logout(self):
         """
-        Here we prove that after logging out once, the endpoint will reject a second logout request
+        Here we prove that after logging out once, the endpoint will
+        reject a second logout request
         :return:
         """
         login_response = self.get_token()
@@ -147,7 +188,8 @@ class APIAuthTest(APITestCase):
 
     def test_verify_old_token(self):
         """
-        This test verifies that after logging out, the token we used becomes invalid
+        This test verifies that after logging out, the token we used
+        becomes invalid
         :return:
         """
         login_response = self.get_token()
@@ -159,7 +201,8 @@ class APIAuthTest(APITestCase):
 
     def test_logout_non_logged(self):
         """
-        This test verifies that the "logout" endpoint will reject request from non-logged clients
+        This test verifies that the "logout" endpoint will reject
+        request from non-logged clients
         :return:
         """
         response = self.logout_current()
@@ -196,8 +239,9 @@ class APIAuthTest(APITestCase):
 
     def test_close_other_access(self):
         """
-        During this test a client obtains 2 tokens and we prove that authenticating with just one of them
-        he's able to invalidate the other one using the 'logout_other' endpoint
+        During this test a client obtains 2 tokens and we prove that
+        authenticating with just one of them he's able to invalidate the
+        other one using the 'logout_other' endpoint
         :return:
         """
         # Warning, in the next 3 lines we're using 'magic numbers'
@@ -213,8 +257,8 @@ class APIAuthTest(APITestCase):
 
     def test_logout_all(self):
         """
-        In this test we prove that a single request against the 'logout_all' endpoint will invalidate all the tokens
-        related to a single user
+        In this test we prove that a single request against the 'logout_all'
+        endpoint will invalidate all the tokens related to a single user
         :return:
         """
         token_list = []
