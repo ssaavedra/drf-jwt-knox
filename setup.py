@@ -43,9 +43,9 @@ setup(
     ],
     # keywords='',
     packages=['jwt_knox'],
-    install_requires=['djangorestframework~=3.8', 'django-rest-knox~=3.1', 'PyJWT~=1.6', 'six~=1.11'],
+    install_requires=['djangorestframework~=3.9', 'django-rest-knox~=3.6', 'PyJWT~=1.7', 'six~=1.12'],
     extras_require={
         'dev': ['pypandoc~=1.4'],
-        'test': ['coverage~=4.5', 'pytest~=3.5.1', 'tox~=3.0'],
+        'test': ['coverage~=4.5', 'pytest~=4.3', 'tox~=3.7'],
     },
 )

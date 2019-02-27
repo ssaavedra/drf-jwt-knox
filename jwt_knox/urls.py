@@ -10,6 +10,6 @@ from .viewsets import JWTKnoxAPIViewSet
 app_name = 'jwt_knox'
 
 router = routers.SimpleRouter(trailing_slash=False)
-router.register(r'', JWTKnoxAPIViewSet, base_name='jwt_knox')
+router.register(r'', JWTKnoxAPIViewSet, basename='jwt_knox')
 
 urlpatterns = [url('^', include(router.urls)), ]
