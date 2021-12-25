@@ -63,14 +63,14 @@ class JWTKnoxAPIViewSet(PerViewAuthenticatorMixin, ViewSet):
             return api_settings.JWT_LOGIN_AUTHENTICATION_CLASSES
 
     @action(methods=['post', ], detail=False)
-    def get_token(self, request, expires=None):
+    def get_token(self, request, expiry=None):
         """
         This view authenticates a user via the
         `JWT_LOGIN_AUTHENTICATION_CLASSES` (which, in turn, defaults to
         rest_framework's `DEFAULT_AUTHENTICATION_CLASSES`) to get a view
         token.
         """
-        token = create_auth_token(user=request.user, expires=expires)
+        token = create_auth_token(user=request.user, expiry=expiry)
         return Response(response_payload_handler(token, request.user, request))
 
     @action(methods=('get', 'post'), detail=False)

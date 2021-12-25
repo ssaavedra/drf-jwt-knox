@@ -18,7 +18,6 @@ DEFAULTS = {
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': None,
-    'JWT_VERIFY': True,
     'JWT_LEEWAY': 0,
 }
 

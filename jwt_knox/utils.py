@@ -1,3 +1,4 @@
+from typing import Optional
 import jwt
 import uuid
 from calendar import timegm
@@ -5,7 +6,7 @@ from datetime import datetime
 
 from django.contrib.auth import get_user_model
 
-from knox.models import AuthToken
+from knox.models import AuthToken, User
 
 from jwt_knox.settings import api_settings
 
@@ -28,9 +29,9 @@ def get_username(user):
     return username
 
 
-def create_auth_token(user, expires):
-    auth_token = AuthToken.objects.create(user=user, expires=expires)
-    payload = jwt_payload_handler(user, auth_token, expires)
+def create_auth_token(user, expiry):
+    _, token = AuthToken.objects.create(user=user, expiry=expiry)
+    payload = jwt_payload_handler(user, token, expiry)
 
     return jwt_encode_handler(payload)
 
@@ -43,7 +44,7 @@ def jwt_get_username_from_payload_handler(payload):
     return payload.get('username')
 
 
-def jwt_payload_handler(user, token, expires):
+def jwt_payload_handler(user: User, token: str, expiry: Optional[datetime]):
     username_field = get_username_field()
     username = get_username(user)
 
@@ -53,8 +54,8 @@ def jwt_payload_handler(user, token, expires):
         'jti': token,
     }
 
-    if expires:
-        payload['exp'] = datetime.utcnow() + expires
+    if expiry:
+        payload['exp'] = datetime.utcnow() + expiry
 
     if isinstance(user.pk, uuid.UUID):
         payload['user_id'] = str(user.pk)
@@ -72,7 +73,7 @@ def jwt_payload_handler(user, token, expires):
 
 def jwt_encode_handler(payload):
     return jwt.encode(payload, api_settings.JWT_SECRET_KEY,
-                      api_settings.JWT_ALGORITHM).decode('utf-8')
+                      api_settings.JWT_ALGORITHM)
 
 
 def jwt_decode_handler(token):
@@ -81,12 +82,12 @@ def jwt_decode_handler(token):
     return jwt.decode(
         token,
         api_settings.JWT_SECRET_KEY,
-        api_settings.JWT_VERIFY,
+        algorithms=api_settings.JWT_ALGORITHM,
         options=options,
         leeway=api_settings.JWT_LEEWAY,
         audience=api_settings.JWT_AUDIENCE,
         issuer=api_settings.JWT_ISSUER,
-        algorithms=[api_settings.JWT_ALGORITHM], )
+    )
 
 
 def jwt_join_header_and_token(token):

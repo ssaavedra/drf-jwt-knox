@@ -37,15 +37,14 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
         'Topic :: Internet :: WWW/HTTP :: Session',
     ],
     # keywords='',
     packages=['jwt_knox'],
-    install_requires=['djangorestframework~=3.9', 'django-rest-knox~=3.6', 'PyJWT~=1.7', 'six~=1.12'],
+    install_requires=['djangorestframework~=3.13', 'django-rest-knox~=4.1.0', 'PyJWT~=2.3.0'],
     extras_require={
         'dev': ['pypandoc~=1.4'],
-        'test': ['coverage~=4.5', 'pytest~=4.3', 'tox~=3.7'],
+        'test': ['pytest-cov~=3.0.0', 'pytest~=6.2.5'],
     },
 )

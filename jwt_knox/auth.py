@@ -1,8 +1,8 @@
 import jwt
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.utils.encoding import smart_text
-from django.utils.translation import ugettext as _
+from django.utils.encoding import smart_str
+from django.utils.translation import gettext as _
 from knox.crypto import hash_token
 from knox.models import AuthToken
 from rest_framework import exceptions
@@ -59,9 +59,9 @@ class BaseJWTTAuthentication(BaseAuthentication):
 
         return (user, self.ensure_valid_auth_token(user, token))
 
-    def ensure_valid_auth_token(self, user, token):
+    def ensure_valid_auth_token(self, user, token: AuthToken):
         for auth_token in AuthToken.objects.filter(user=user):
-            if auth_token.expires is not None and auth_token.expires < timezone.now():
+            if auth_token.expiry is not None and auth_token.expiry < timezone.now():
                 auth_token.delete()
                 continue
             digest = hash_token(token, auth_token.salt)
@@ -85,7 +85,7 @@ class JSONWebTokenKnoxAuthentication(BaseJWTTAuthentication):
         auth = get_authorization_header(request).split()
         auth_header_prefix = api_settings.JWT_AUTH_HEADER_PREFIX.lower()
 
-        if not auth or smart_text(auth[0].lower()) != auth_header_prefix:
+        if not auth or smart_str(auth[0].lower()) != auth_header_prefix:
             return None
 
         if len(auth) == 1:
@@ -100,7 +100,7 @@ class JSONWebTokenKnoxAuthentication(BaseJWTTAuthentication):
 
         try:
             payload = jwt_decode_handler(jwt_value)
-        except jwt.ExpiredSignature:
+        except jwt.ExpiredSignatureError:
             msg = _('Signature has expired.')
             raise exceptions.AuthenticationFailed(msg)
         except jwt.DecodeError:
