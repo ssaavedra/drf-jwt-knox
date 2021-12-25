@@ -30,6 +30,7 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -r requirements/requirements-testing.txt
         python -m pip install -r requirements/requirements-django${{ matrix.django-version }}.txt
+        python -m pip install -e .
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
