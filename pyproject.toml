@@ -1,0 +1,65 @@
+[project]
+name = "drf-jwt-knox"
+description = "Knox-fortified JSON Web Tokens for Django REST Framework"
+authors = [
+    "Santiago Saavedra <ssaavedra@gpul.org>"
+]
+license = "Apache2"
+readme = "README.md"
+python = "^3.6"
+homepage = "https://github.com/ssaavedra/drf-jwt-knox"
+repository = "https://github.com/ssaavedra/drf-jwt-knox"
+documentation = "https://github.com/ssaavedra/drf-jwt-knox"
+
+keywords = ["django", "jwt"]
+
+classifiers = [
+    'Development Status :: 3 - Alpha',
+    'Environment :: Web Environment',
+    'Framework :: Django',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: Apache Software License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python :: 3',
+    'Topic :: Internet :: WWW/HTTP :: Session',
+]
+
+[options]
+packages = ["jwt_knox"]
+
+# Requirements
+[dependencies]
+djangorestframework = "^3.13"
+django-rest-knox = "^4.1.0"
+PyJWT = "^2.3.0"
+
+[optional-dependencies]
+tests = [
+    'pytest-cov=^3.0.0',
+    'pytest=^6.2.5',
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.setuptools_scm]
+
+[tool.poetry]
+name = "drf-jwt-knox"
+description = "Knox-fortified JSON Web Tokens for Django REST Framework"
+authors = [
+    "Santiago Saavedra <ssaavedra@gpul.org>"
+]
+license = "Apache2"
+readme = "README.md"
+packages = [
+    { include = "jwt_knox" },
+]
+version = "0.0.0"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+tagged-metadata = false
+dirty = true
