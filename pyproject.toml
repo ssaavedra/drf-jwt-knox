@@ -14,7 +14,7 @@ documentation = "https://github.com/ssaavedra/drf-jwt-knox"
 keywords = ["django", "jwt"]
 
 classifiers = [
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Environment :: Web Environment',
     'Framework :: Django',
     'Intended Audience :: Developers',
@@ -29,18 +29,13 @@ packages = ["jwt_knox"]
 
 # Requirements
 [dependencies]
-djangorestframework = "^3.13"
-django-rest-knox = "^4.1.0"
-PyJWT = "^2.3.0"
+djangorestframework = "^3.14"
+django-rest-knox = "^4.2.0"
+PyJWT = "^2.7.0"
 
-[optional-dependencies]
-tests = [
-    'pytest-cov=^3.0.0',
-    'pytest=^6.2.5',
-]
 
 [build-system]
-requires = ["setuptools~=58", "poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+requires = ["setuptools>=67.7.2", "poetry-core>=1.6.0", "poetry-dynamic-versioning"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.setuptools_scm]
@@ -59,10 +54,16 @@ packages = [
 version = "0.0.0"
 
 [tool.poetry.dependencies]
-djangorestframework = "^3.13"
-django-rest-knox = "^4.1.0"
-PyJWT = "^2.3.0"
-python = "^3.6"
+djangorestframework = "^3.14"
+django-rest-knox = "^4.2.0"
+PyJWT = "^2.7.0"
+python = "^3.9"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+pytest-django = "^4.5.2"
+pytest-cov = "^4.0.0"
+tox = "^4.5.1"
 
 [tool.poetry-dynamic-versioning]
 enable = true
