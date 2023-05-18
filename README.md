@@ -1,11 +1,12 @@
 DRF JWT + Knox
 ==============
 
-[![Build status](https://github.com/ssaavedra/drf-jwt-knox/actions/workflows/python-package.yml/badge.svg?event=release)](https://github.com/ssaavedra/drf-jwt-knox/actions/workflows/python-package.yml)
-[![codecov](https://codecov.io/gh/ssaavedra/drf-jwt-knox/branch/master/graph/badge.svg)](https://codecov.io/gh/ssaavedra/drf-jwt-knox)
+[![Build status](https://github.com/ssaavedra/drf-jwt-knox/actions/workflows/python-package.yml/badge.svg)](https://github.com/ssaavedra/drf-jwt-knox/actions/workflows/python-package.yml)
+[![coverage](https://img.shields.io/sonar/coverage/ssaavedra_drf-jwt-knox/main?server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/dashboard?id=ssaavedra_drf-jwt-knox)
 [![PyPI version](https://img.shields.io/pypi/v/drf-jwt-knox.svg)](https://pypi.python.org/pypi/drf-jwt-knox)
-[![Requirements Status](https://requires.io/github/ssaavedra/drf-jwt-knox/requirements.svg?branch=master)](https://requires.io/github/ssaavedra/drf-jwt-knox/requirements/?branch=master)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=ssaavedra_drf-jwt-knox&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=ssaavedra_drf-jwt-knox)
+
+<!-- [![codecov](https://codecov.io/gh/ssaavedra/drf-jwt-knox/branch/master/graph/badge.svg)](https://codecov.io/gh/ssaavedra/drf-jwt-knox) -->
 
 This package provides an authentication mechanism for Django REST
 Framework based on [JSON Web Tokens][JWT] in the browser backed up by
