@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10"]
-        django-version: ["22lts", "32lts"]
+        django-version: ["32lts", "41", "42lts"]
 
     steps:
     - uses: actions/checkout@v2

@@ -64,7 +64,7 @@ class BaseJWTTAuthentication(BaseAuthentication):
             if auth_token.expiry is not None and auth_token.expiry < timezone.now():
                 auth_token.delete()
                 continue
-            digest = hash_token(token, auth_token.salt)
+            digest = hash_token(token)
             if digest == auth_token.digest:
                 return auth_token
 
